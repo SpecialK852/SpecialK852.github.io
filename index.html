@@ -2,61 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JS Header Example</title>
+  <title>dont look too closely</title>
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      height: 100vh;
+      background-color: #121212;
+      color: white;
+      font-family: "Comic-Sans-MS", cursive, sans-serif;
     }
-    nav ul {
+
+    #main-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #1e1e2e;
       display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
+      align-items: center;
+      padding: 0 20px;
+      box-sizing: border-box;
+      z-index: 1000;
+      border-bottom: 1px solid #333;
     }
-    nav a {
-      color: brown;
-      text-decoration: none;
+
+    /* Standalone Draggable Box */
+    #coords-box {
+      position: fixed;
+      /* Initial starting placement */
+      bottom: 20px;
+      right: 20px;
+      
+      background-color: #2b2d42;
+      border: 1px solid #4a4e69;
+      color: #00d2d3;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-family: monospace;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      z-index: 900;
+      
+      /* Visual affordance for dragging */
+      cursor: grab;
+      user-select: none; /* Prevents text highlighting while dragging */
+    }
+
+    #coords-box:active {
+      cursor: grabbing;
+      border-color: #00d2d3;
+    }
+
+    #follower {
+      position: fixed;
+      width: 30px;
+      height: 30px;
+      background-color: #ff4757;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 500;
+      transform: translate(-50%, -50%);
     }
   </style>
 </head>
 <body>
 
-  <main style="padding: 2rem;">
-    <h2>Page Content</h2>
-    <p>This is where the main content lives.</p>
-    <p>Suck my ass</p>
-  </main>
+  <header id="main-header">
+    <h2 style="margin: 1; font-size: 2rem;">goatse.idk</h2>
+  </header>
+
+  <div id="coords-box">
+    X: 0, Y: 0
+  </div>
+
+  <div id="follower"></div>
 
   <script>
-    // Create header element
-    const header = document.createElement('header');
-    
-    // Set internal content
-    header.innerHTML = `
-      <h1 style="margin:1; font-size: 2rem;">My Brand</h1>
-      <nav>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-    `;
+    const header = document.getElementById('main-header');
+    const coordsBox = document.getElementById('coords-box');
+    const follower = document.getElementById('follower');
 
-    // Apply header container styles
-    Object.assign(header.style, {
-      backgroundColor: '#2b2d42',
-      color: 'white',
-      padding: '1rem 2rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
+    // State variables for dragging
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // --- 1. Mouse Tracking & Follower Logic ---
+    window.addEventListener('mousemove', (event) => {
+      const x = event.clientX;
+      const y = event.clientY;
+
+      // Update coordinates text
+      coordsBox.textContent = `X: ${x}, Y: ${y}`;
+
+      // Update mouse follower position (clamped under header)
+      follower.style.left = `${x}px`;
+      const headerHeight = header.offsetHeight;
+      follower.style.top = `${Math.max(headerHeight + 15, y)}px`;
+
+      // --- 2. Handle Drag Movement ---
+      if (isDragging) {
+        // Calculate new position based on cursor minus offset
+        const newLeft = x - offsetX;
+        const newTop = y - offsetY;
+
+        // Apply position
+        coordsBox.style.left = `${newLeft}px`;
+        coordsBox.style.top = `${newTop}px`;
+      }
     });
 
-    // Inject to top of body
-    document.body.prepend(header);
+    // --- 3. Start Dragging ---
+    coordsBox.addEventListener('mousedown', (event) => {
+      isDragging = true;
+
+      // Get bounding box dimensions
+      const rect = coordsBox.getBoundingClientRect();
+
+      // Calculate where inside the box the user clicked
+      offsetX = event.clientX - rect.left;
+      offsetY = event.clientY - rect.top;
+
+      // Switch CSS position from bottom/right layout to top/left pixel values
+      coordsBox.style.bottom = 'auto';
+      coordsBox.style.right = 'auto';
+      coordsBox.style.left = `${rect.left}px`;
+      coordsBox.style.top = `${rect.top}px`;
+    });
+
+    // --- 4. Stop Dragging ---
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
   </script>
+
 </body>
 </html>
