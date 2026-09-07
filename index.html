@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Header Example</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+    nav ul {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    nav a {
+      color: brown;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <main style="padding: 2rem;">
+    <h2>Page Content</h2>
+    <p>This is where the main content lives.</p>
+    <p>Suck my ass</p>
+  </main>
+
+  <script>
+    // Create header element
+    const header = document.createElement('header');
+    
+    // Set internal content
+    header.innerHTML = `
+      <h1 style="margin:1; font-size: 2rem;">My Brand</h1>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    `;
+
+    // Apply header container styles
+    Object.assign(header.style, {
+      backgroundColor: '#2b2d42',
+      color: 'white',
+      padding: '1rem 2rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    });
+
+    // Inject to top of body
+    document.body.prepend(header);
+  </script>
+</body>
+</html>
